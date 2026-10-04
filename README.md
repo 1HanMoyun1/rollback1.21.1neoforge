@@ -1,31 +1,43 @@
-# Rollback Mod（NeoForge 1.21.1 移植版）
+## English
 
-这是 Rollback Mod 从 1.20.1 Forge 向 **NeoForge 1.21.1** 的移植：
-玩法与优化版完全一致（存档覆盖回溯、轻量化药芯（化茧/蜕皮/高塔）、单格吸入器、
-滚动天数 HUD、多人生命/背包统一、hardcore 式毁灭等），并针对 1.21.1 做了原生适配：
+This mod was originally exclusive content for the "Minefading" special episode of *Relics of the Fading City*. It can be used in other modpacks, but you must credit the original author.
 
-- 事件体系迁移：`LivingHurtEvent` → `LivingDamageEvent.Pre`（不可取消，用 `setNewDamage(0)`），
-  `NeoForge.EVENT_BUS`。
-- 注册体系迁移：`DeferredRegister`/`DeferredHolder`。
-- NBT API 适配：序列化携带 `HolderLookup.Provider`（1.21 新签名）；物品数据用 `DataComponents.CUSTOM_DATA`。
-- 网络：`CustomPacketPayload` + `StreamCodec`；`DayInfoPacket` 通过 `RegisterPayloadHandlersEvent` 注册。
-- HUD：`RegisterGuiLayersEvent`，黑屏层用 `registerAboveAll` 注册在最上层（遮挡聊天栏/消息栏）。
-- 配置：JSON 文件 `config/rollbackmod.json` + **Cloth Config 15.x**（`cloth-config-neoforge`，中英双语）。
+The core mechanic of this mod is death rollback: when the player dies, they return to the nearest checkpoint before death rather than the spawn point.
 
-## 构建
+This mod has many interesting features:
 
-- 需要 JDK 21（Gradle 8.12 由 wrapper 自动下载）。
-- `java -classpath gradle\wrapper\gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain build`
-- 产物：`build/libs/rollbackmod-1.1.0-1.21.1-neoforge.jar`（模组名-模组版本-游戏版本-加载器）。
+| Name | Type | Function | Notes |
+| --- | --- | --- | --- |
+| Inhaler | Inhaler | Used to trigger cores | The Inhaler must be equipped in the main hand. |
+| Cocoon Core | Core | Creates a checkpoint immediately | Cores must be equipped in the offhand.(in countdown mode it also extends the survival time by one day) |
+| Molting Core | Core | Rolls back immediately | Cores must be equipped in the offhand. |
+| Tower Core | Core | Destroys yourself | Cores must be equipped in the offhand. **This forces the player into spectator mode and cannot be undone!** |
+| Countdown | Mod config | At the start of a new day, the on-screen "Day X" changes to "X days remaining" | **When the countdown ends, the player is forced into spectator mode and cannot be undone!** |
 
-## 与 1.20.1 Forge 版的差异
+Credits:
 
-| 项 | 1.20.1 Forge | 1.21.1 NeoForge |
-| --- | --- | --- |
-| 伤害事件 | LivingHurtEvent | LivingDamageEvent.Pre（不可取消） |
-| HUD 注册 | RegisterGuiOverlaysEvent | RegisterGuiLayersEvent |
-| 物品数据 | ItemStack NBT | DataComponents.CUSTOM_DATA |
-| 配置 | Cloth Config 11.x | Cloth Config 15.x |
-| 物品堆耐久 | hurtAndBreak(int, entity, cb) | hurtAndBreak(int, level, entity, cb) |
+* Friend @liyuu，without him, this mod wouldn't exist;
+* Friend @LAST-iMP, who taught the author how to build the mod from source code;
+* Everyone who plays this mod.
 
-致谢：作者 HanMoyun；朋友 @liyuu、@LAST-iMP。
+## 中文
+
+本模组原为《亡都遗骨》特别篇："我的余晖"专属内容，可用于其他整合包，但需标注原作者。
+
+模组核心为死亡回溯，玩家死亡后返回死亡前的最近节点，而非出生点。
+
+该模组有很多有趣的东西：
+
+| 名称 | 类型 | 功能 | 备注 |
+| --- | --- | --- | --- |
+| 吸入器 | 吸入器 | 用于触发药芯 | 吸入器需要装备在主手。 |
+| 化茧 | 药芯 | 立即存档 | 药芯需要装备在副手。（倒计时模式下额外延长一天存活时间）|
+| 蜕皮 | 药芯 | 立即回溯 | 药芯需要装备在副手。 |
+| 高塔 | 药芯 | 毁灭自己 | 药芯需要装备在副手，**该功能会使玩家强制进入旁观者模式且无法修改！** |
+| 倒计时 | 模组配置 | 新的一天开始时屏幕上的第X天改为还剩X天。 | **倒计时结束后会使玩家强制进入旁观者模式且无法修改！** |
+
+感谢：
+
+* 朋友@liyu，没有他，就没有这个模组；
+* 朋友@LAST-iMP，教会作者如何从源代码里构建模组；
+* 游玩模组的大家们。
