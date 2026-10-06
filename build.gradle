@@ -1,7 +1,20 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.78'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+// ---- 多版本支持：用 -Pmc=<minecraft 版本> 选择 versions/<版本>.properties ----
+def mcTarget = findProperty('mc') ?: '1.21.1'
+if (mcTarget != null) {
+    def versionFile = file("versions/${mcTarget}.properties")
+    if (!versionFile.exists()) {
+        throw new GradleException("Unknown MC target '${mcTarget}': missing ${versionFile}")
+    }
+    def props = new Properties()
+    versionFile.withInputStream { props.load(it) }
+    props.each { key, value -> ext.set(key.toString(), value.toString()) }
+    logger.lifecycle("[rollbackmod] Building for MC ${mcTarget}")
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -45,6 +58,8 @@ neoForge {
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
+sourceSets.main.java.srcDir "src/versioned/${mcTarget}/java"
+sourceSets.main.resources.srcDir "src/versioned/${mcTarget}/resources"
 
 repositories {
     maven {
@@ -53,7 +68,7 @@ repositories {
 }
 
 dependencies {
-    implementation "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
+    implementation "me.shedaniel.cloth:cloth-config-neoforge:${findProperty('cloth_version') ?: '15.0.140'}"
 }
 
 tasks.named('processResources', ProcessResources).configure {

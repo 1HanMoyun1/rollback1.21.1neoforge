@@ -20,13 +20,13 @@ public class CocoonCoreEffect implements ICoreEffect {
 
     @Override
     public CoreUseResult onUseInhaler(ServerPlayer player, ItemStack inhaler, ItemStack coreStack) {
-        RollbackManager.createCheckpoint(player.getServer(), "cocoon_core");
+        RollbackManager.createCheckpoint(player.level().getServer(), "cocoon_core");
 
         // 倒计时模式下，化茧存档额外延长一天存活时间
         if (RollbackConfig.countdownMode && RollbackConfig.cocoonExtendsCountdownDay) {
-            RollbackSavedData data = RollbackSavedData.get(player.getServer());
+            RollbackSavedData data = RollbackSavedData.get(player.level().getServer());
             data.setCountdownStartDay(data.getCountdownStartDay() + 1L);
-            DayCounterManager.syncToAll(player.getServer());
+            DayCounterManager.syncToAll(player.level().getServer());
             return CoreUseResult.success(true, Component.translatable("message.rollbackmod.checkpoint_created_extended"));
         }
         return CoreUseResult.success(true, Component.translatable("message.rollbackmod.checkpoint_created"));

@@ -75,7 +75,7 @@ public final class DayCounterManager {
     }
 
     public static void syncTo(ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player, buildPacket(player.getServer(), false, -1, -1));
+        PacketDistributor.sendToPlayer(player, buildPacket(player.level().getServer(), false, -1, -1));
     }
 
     public static void syncToAll(MinecraftServer server) {
